@@ -160,13 +160,15 @@ CREATE TABLE pago (
 
 -- Usuarios del sistema (admin, 2 clientes y 1 bodeguero)
 INSERT INTO usuario (email, contrasena, rol) VALUES
-    ('admin@shopcore.com',    'admin123',    'admin'),
-    ('juan.perez@email.com',  'cliente123',  'cliente'),
-    ('maria.gomez@email.com', 'cliente456',  'cliente'),
-    ('bodega@shopcore.com',   'bodega123',   'bodeguero');
+	('juana.gomez@email.com','cliente201','cliente'),
+    ('admin@shopcore.com','admin123','admin'),
+    ('juan.perez@email.com','cliente123','cliente'),
+    ('maria.gomez@email.com','cliente456','cliente'),
+    ('bodega@shopcore.com','bodega123','bodeguero');
 
 -- Clientes vinculados a los usuarios con id_usuario 2 y 3
 INSERT INTO cliente (id_usuario, nombre, apellido, email, telefono, direccion) VALUES
+	(1, 'Juana',  'Gomez', 'juana.gomez@email.com',  '3111235565', 'Calle 80 #15-20, Bogota'),
     (2, 'Juan',  'Perez', 'juan.perez@email.com',  '3001234567', 'Calle 80 #15-20, Bogota'),
     (3, 'Maria', 'Gomez', 'maria.gomez@email.com', '3109876543', 'Carrera 7 #45-10, Bogota');
 
@@ -179,16 +181,20 @@ INSERT INTO categoria (nombre, descripcion) VALUES
 
 -- Cinco productos del catálogo con stock inicial
 INSERT INTO producto (id_categoria, nombre, precio, stock, stock_minimo) VALUES
-    (1, 'Audifonos Bluetooth',     89900, 50, 10),
-    (1, 'Cargador USB-C 65W',      45000, 80, 15),
-    (2, 'Camiseta Polo',           35000,120, 20),
-    (3, 'Lampara LED Escritorio',  62000, 30,  5),
-    (4, 'Balon de Futbol',         55000, 15,  5);
+    (1, 'Audifonos Bluetooth',89900, 50, 10),
+    (1, 'Cargador USB-C 65W',45000, 80, 15),
+    (2, 'Camiseta Polo',35000,120, 20),
+    (3, 'Lampara LED Escritorio',62000, 30,  5),
+    (4, 'Balon de Futbol',55000, 15,  5),
+	(4, 'Balon de Fuchibol',55000, 15,  20);
 
 -- Pedido de Juan Perez: 1 audifono con IVA del 19%
 -- subtotal=89900  |  iva=17081  |  total=106981
 INSERT INTO pedido (id_cliente, estado, subtotal, iva, total) VALUES
-    (1, 'pendiente', 89900, 17081, 106981);
+    (1, 'pendiente', 89900, 17081, 106981),
+	(1, 'entregado', 149900, 28481, 178381),
+	(2, 'entregado', 1500000, 285000, 1785000);
+	
 
 -- Línea de detalle: 1 unidad del producto 1 al precio vigente
 INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, precio_unitario) VALUES
@@ -235,7 +241,6 @@ WHERE  estado = 'pendiente';
 
 
 -- Q4: Alerta de inventario — stock por debajo del umbral mínimo
--- Requerimiento: RF-02 (alerta de reabastecimiento)
 SELECT nombre,
        stock,
        stock_minimo,
@@ -386,7 +391,6 @@ BEGIN
     RETURN ROUND(p_subtotal * 1.19, 2);
 END;
 $$;
-
 
 -- -----------------------------------------------------------------
 -- Función: obtener_stock
